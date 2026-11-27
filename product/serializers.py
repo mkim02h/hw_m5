@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Category, Product, Review
 
+# HW 1
 class CategoryListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -30,3 +31,28 @@ class ReviewDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = '__all__'
+
+# HW 2
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = 'id text stars'.split()
+
+class ProductReviewSerializer(serializers.ModelSerializer):
+    reviews = ReviewSerializer(many=True)
+    rating = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = 'id title reviews rating'.split()
+
+    def get_rating(self, obj):
+            return round(obj.rating, 1) if obj.rating is not None else None
+
+class CategorySerializer(serializers.ModelSerializer):
+    product_count = serializers.IntegerField()
+    
+    class Meta:
+        model = Category
+        fields = 'id name product_count'.split()
